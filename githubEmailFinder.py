@@ -2,8 +2,7 @@
 
 #Python libraries
 import requests
-import re
-from pandas import DataFrame
+from tabulate import tabulate
 
 #Color setup
 class bcolors:
@@ -31,15 +30,13 @@ def checkGithubAPI():
 	print("Looking for email(s) for the following github account: https://github.com/"+str(AccountName))
 	response = requests.get('https://api.github.com/users/'+str(AccountName)+'/events/public')
 	#Search for the email in the answer
-	findEmailField = re.findall(r"\"email\":\"(.*?)\",\"name\":\"(.*?)\"", response.text)
+	findEmailField = set(zip([email['author']['email'] for item in response.json() if item['payload'].get('commits')!=None for email in item['payload'].get('commits')], [username['author']['name'] for item in response.json() if item['payload'].get('commits')!=None for username in item['payload'].get('commits')]))
 	my_list = list(set(findEmailField))
-
 	if not my_list:
 		print("No emails found")
 	else:
 		print("The email of your target can possibly be found in the list below: ")
-		df = DataFrame (my_list,columns=['Email','Username'])
-		print(df)
+		print(tabulate(my_list, headers = ['Email', 'Username']))
 
 # Entry point of the script
 def main():
