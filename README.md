@@ -6,7 +6,7 @@ The tool uses the GitHub API without authentication.
 
    ```bash
    apt-get install python3.9
-   pip3 install pandas
+   pip3 install -r requirements.txt
    ```
 ## Usage
 
